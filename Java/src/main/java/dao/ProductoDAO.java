@@ -3,6 +3,9 @@ import org.hipermercado.ConexionDB;
 import modelo.Producto;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public class ProductoDAO {
 
     public Producto getById(int id) throws SQLException {
@@ -52,5 +55,31 @@ public class ProductoDAO {
                 System.out.println("Error al añadir el producto");
             }
         }
+    }
+
+    public List<Producto> filtrarPorSeccion(int idSeccion) throws SQLException {
+        String sql = "SELECT * FROM productos WHERE id_seccion = ?";
+        List<Producto> productos = new ArrayList<>();
+
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idSeccion);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                productos.add(new Producto(
+                        rs.getInt("id_producto"),
+                        rs.getString("nombre"),
+                        rs.getString("descripcion"),
+                        rs.getInt("id_seccion"),
+                        rs.getInt("id_marca"),
+                        rs.getDouble("precio"),
+                        rs.getInt("stock"),
+                        rs.getString("codigo_barras")
+                ));
+            }
+        }
+        return productos;
     }
 }
