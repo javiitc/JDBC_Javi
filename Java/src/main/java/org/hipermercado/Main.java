@@ -15,10 +15,11 @@ public class Main {
         try {
             Connection con = ConexionDB.getConnection();
             System.out.println("Conectado a la BD");
-            List<Producto> monster = dao.filtrarPorMarca(1);
-            for (Producto producto : monster) {
-                System.out.println(producto);
-            }
+            Producto p = dao.buscarPorId(1);
+            p.setNombre("Monster Blanco");
+            p.setPrecio(1.40);
+            dao.update(p);
+            System.out.println(dao.buscarPorId(1));
         } catch (SQLException error) {
             System.out.println("No se puedo conectar a la base de datos");
         }

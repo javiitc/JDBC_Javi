@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ProductoDAO {
 
-    public Producto getById(int id) throws SQLException {
+    public Producto buscarPorId(int id) throws SQLException {
         String sql = "SELECT * FROM productos WHERE id_producto = ?";
 
         try (Connection con = ConexionDB.getConnection();
@@ -110,6 +110,53 @@ public class ProductoDAO {
             ps.setInt(1, idMarca);
             ResultSet rs = ps.executeQuery();
 
+            while (rs.next()) {
+                productos.add(new Producto(
+                        rs.getInt("id_producto"),
+                        rs.getString("nombre"),
+                        rs.getString("descripcion"),
+                        rs.getInt("id_seccion"),
+                        rs.getInt("id_marca"),
+                        rs.getDouble("precio"),
+                        rs.getInt("stock"),
+                        rs.getString("codigo_barras")
+                ));
+            }
+        }
+        return productos;
+    }
+
+    public void update(Producto p) throws SQLException {
+        String sql = "UPDATE productos SET nombre=?, descripcion=?, precio=?, stock=? " +
+                "WHERE id_producto=?";
+
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, p.getNombre());
+            ps.setString(2, p.getDescripcion());
+            ps.setDouble(3, p.getPrecio());
+            ps.setInt(4, p.getStock());
+            ps.setInt(5, p.getIdProducto());
+
+            int filas = ps.executeUpdate();
+
+            if (filas > 0) {
+                System.out.println("Producto actualizado correctamente");
+            } else {
+                System.out.println("No se encontró ningún producto");
+            }
+        }
+    }
+
+    public List<Producto> obtenerProdcutos() throws SQLException {
+        String sql = "SELECT * FROM productos";
+        List<Producto> productos = new ArrayList<>();
+
+        try (Connection con = ConexionDB.getConnection();
+             Statement st = con.createStatement()) {
+
+            ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
                 productos.add(new Producto(
                         rs.getInt("id_producto"),
