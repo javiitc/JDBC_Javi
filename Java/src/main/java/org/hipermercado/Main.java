@@ -15,9 +15,9 @@ public class Main {
         try {
             Connection con = ConexionDB.getConnection();
             System.out.println("Conectado a la BD");
-            List<Producto> bebidas = dao.filtrarPorSeccion(1);
-            for (Producto p : bebidas) {
-                System.out.println(p);
+            List<Producto> monster = dao.filtrarPorMarca(1);
+            for (Producto producto : monster) {
+                System.out.println(producto);
             }
         } catch (SQLException error) {
             System.out.println("No se puedo conectar a la base de datos");

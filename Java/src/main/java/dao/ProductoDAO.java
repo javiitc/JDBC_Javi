@@ -82,4 +82,47 @@ public class ProductoDAO {
         }
         return productos;
     }
+
+    public void eliminarProducto(int id) throws SQLException {
+        String sql = "DELETE FROM productos WHERE id_producto = ?";
+
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            int filas = ps.executeUpdate();
+
+            if (filas > 0) {
+                System.out.println("Producto eliminado correctamente");
+            } else {
+                System.out.println("No se encontró ningún producto");
+            }
+        }
+    }
+
+    public List<Producto> filtrarPorMarca(int idMarca) throws SQLException {
+        String sql = "SELECT * FROM productos WHERE id_marca = ?";
+        List<Producto> productos = new ArrayList<>();
+
+        try (Connection con = ConexionDB.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idMarca);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                productos.add(new Producto(
+                        rs.getInt("id_producto"),
+                        rs.getString("nombre"),
+                        rs.getString("descripcion"),
+                        rs.getInt("id_seccion"),
+                        rs.getInt("id_marca"),
+                        rs.getDouble("precio"),
+                        rs.getInt("stock"),
+                        rs.getString("codigo_barras")
+                ));
+            }
+        }
+        return productos;
+    }
 }
